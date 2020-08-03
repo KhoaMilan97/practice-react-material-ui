@@ -15,6 +15,7 @@ import StateContext from "../context/StateContext";
 import DispatchContext from "../context/DispatchContext";
 import Home from "./Home";
 import CreatePost from "./CreatePost";
+import ViewSinglePost from "./ViewSinglePost";
 
 function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -95,6 +96,9 @@ function App() {
               </Route>
               <Route path="/create">
                 <CreatePost />
+              </Route>
+              <Route path="/post/:id">
+                <ViewSinglePost />
               </Route>
             </Switch>
 

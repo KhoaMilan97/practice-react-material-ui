@@ -118,10 +118,10 @@ const HomeGuest = () => {
       case "usernameUniqueResults":
         if (action.value) {
           draft.username.hasErrors = true;
+          draft.username.isUnique = false;
           draft.username.messages = "That username is already taken.";
         } else {
-          draft.username.hasErrors = false;
-          draft.username.messages = "";
+          draft.username.isUnique = true;
         }
         return;
       case "emailImmediately":
@@ -140,10 +140,10 @@ const HomeGuest = () => {
       case "emailUniqueResults":
         if (action.value) {
           draft.email.hasErrors = true;
+          draft.email.isUnique = false;
           draft.email.messages = "That email is already used.";
         } else {
-          draft.email.hasErrors = false;
-          draft.email.messages = "";
+          draft.email.isUnique = true;
         }
         return;
       case "passwordImmediately":
@@ -162,9 +162,11 @@ const HomeGuest = () => {
         return;
       case "submitForm":
         if (
-          !draft.password.hasErrors &&
           !draft.username.hasErrors &&
-          !draft.email.hasErrors
+          draft.username.isUnique &&
+          !draft.email.hasErrors &&
+          draft.email.isUnique &&
+          !draft.password.hasErrors
         ) {
           draft.submitCount++;
         }
@@ -183,7 +185,9 @@ const HomeGuest = () => {
         const delay = setTimeout(() => {
           dispatch({ type: "usernameAfterDelay" });
         }, 500);
-        return () => clearTimeout(delay);
+        return () => {
+          clearTimeout(delay);
+        };
       }
     }, // eslint-disable-next-line react-hooks/exhaustive-deps
     [state.username.value]
@@ -193,6 +197,7 @@ const HomeGuest = () => {
     () => {
       if (state.username.checkCount) {
         const ourRequest = Axios.CancelToken.source();
+
         async function fetchResults() {
           try {
             const response = await Axios.post(
@@ -200,13 +205,16 @@ const HomeGuest = () => {
               { username: state.username.value },
               { cancelToken: ourRequest.token }
             );
+
             dispatch({ type: "usernameUniqueResults", value: response.data });
           } catch (error) {
             console.log("Something went wrong or cancel Token.");
           }
         }
         fetchResults();
-        return () => ourRequest.cancel();
+        return () => {
+          ourRequest.cancel();
+        };
       }
     }, // eslint-disable-next-line react-hooks/exhaustive-deps
     [state.username.checkCount]
@@ -219,7 +227,9 @@ const HomeGuest = () => {
         const delay = setTimeout(() => {
           dispatch({ type: "emailAfterDelay" });
         }, 500);
-        return () => clearTimeout(delay);
+        return () => {
+          clearTimeout(delay);
+        };
       }
     }, // eslint-disable-next-line react-hooks/exhaustive-deps
     [state.email.value]
@@ -229,6 +239,7 @@ const HomeGuest = () => {
     () => {
       if (state.email.checkCount) {
         const ourRequest = Axios.CancelToken.source();
+
         async function fetchResults() {
           try {
             const response = await Axios.post(
@@ -236,13 +247,16 @@ const HomeGuest = () => {
               { email: state.email.value },
               { cancelToken: ourRequest.token }
             );
+
             dispatch({ type: "emailUniqueResults", value: response.data });
           } catch (error) {
             console.log("Something went wrong or cancel Token.");
           }
         }
         fetchResults();
-        return () => ourRequest.cancel();
+        return () => {
+          ourRequest.cancel();
+        };
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -256,7 +270,9 @@ const HomeGuest = () => {
         const delay = setTimeout(() => {
           dispatch({ type: "passwordAfterDelay" });
         }, 500);
-        return () => clearTimeout(delay);
+        return () => {
+          clearTimeout(delay);
+        };
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -268,7 +284,9 @@ const HomeGuest = () => {
     () => {
       if (state.submitCount) {
         const ourRequest = Axios.CancelToken.source();
+        let unmounted = false;
         setLoading(true);
+
         async function fetchResults() {
           try {
             const response = await Axios.post(
@@ -281,22 +299,29 @@ const HomeGuest = () => {
               { cancelToken: ourRequest.token }
             );
 
-            appDispatch({ type: "login", payload: response.data });
-            appDispatch({
-              type: "flashMessage",
-              data: {
-                message: "Congrats! Welcome to your new account.",
-                type: "success",
-              },
-            });
-            setLoading(false);
+            if (!unmounted) {
+              appDispatch({ type: "login", payload: response.data });
+              appDispatch({
+                type: "flashMessage",
+                data: {
+                  message: "Congrats! Welcome to your new account.",
+                  type: "success",
+                },
+              });
+              setLoading(false);
+            }
           } catch (error) {
             console.log("Something went wrong or cancel Token.");
-            setLoading(false);
+            if (!unmounted) {
+              setLoading(false);
+            }
           }
         }
         fetchResults();
-        return () => ourRequest.cancel();
+        return () => {
+          ourRequest.cancel();
+          unmounted = true;
+        };
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -412,7 +437,8 @@ const HomeGuest = () => {
                 className={classes.button}
                 onClick={handleSubmit}
               >
-                Sign up for Complex App {loading && <CircularProgress />}
+                Sign up for Complex App{" "}
+                {loading && <CircularProgress style={{ color: "white" }} />}
               </Button>
             </Grid>
           </Grid>

@@ -25,5 +25,13 @@ export default createMuiTheme({
     body2: {
       color: gray,
     },
+    h2: {
+      marginBottom: ".5rem",
+      fontFamily: "inherit",
+      fontWeight: 500,
+      lineHeight: 1.2,
+      color: "inherit",
+      fontSize: "2rem",
+    },
   },
 });

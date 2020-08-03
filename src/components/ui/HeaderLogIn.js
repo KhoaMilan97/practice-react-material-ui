@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 
 import Grid from "@material-ui/core/Grid";
 import IconButton from "@material-ui/core/IconButton";
@@ -15,6 +15,7 @@ const HeaderLogIn = (props) => {
   const { classes, matchesSM } = props;
   const dispatch = useContext(DispatchContext);
   const state = useContext(StateContext);
+  const history = useHistory();
 
   return (
     <Grid
@@ -67,6 +68,7 @@ const HeaderLogIn = (props) => {
                 type: "success",
               },
             });
+            history.push("/");
           }}
         >
           Sign Out

@@ -175,7 +175,11 @@ const Header = (props) => {
             color="secondary"
             style={{ width: 90 }}
           >
-            {loading ? <CircularProgress size={30} color="white" /> : "Sign in"}
+            {loading ? (
+              <CircularProgress size={30} style={{ color: "white" }} />
+            ) : (
+              "Sign in"
+            )}
           </Button>
         </Grid>
       </Grid>

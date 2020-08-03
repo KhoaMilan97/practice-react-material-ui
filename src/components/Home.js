@@ -14,19 +14,6 @@ const useStyles = makeStyles((theme) => ({
   listGroup: {
     width: "100%",
   },
-  listGroupItem: {
-    border: "1px solid rgba(0,0,0,.125)",
-    padding: ".75rem 1.25rem",
-    marginBottom: "-1px",
-    "&:first-child": {
-      borderTopLeftRadius: ".25rem",
-      borderTopRightRadius: ".25rem",
-    },
-    "&:last-child": {
-      bordeBottomRightRadius: ".25rem",
-      borderBottomLeftRadius: ".25rem",
-    },
-  },
 }));
 
 const Home = () => {
@@ -35,29 +22,40 @@ const Home = () => {
   const appState = useContext(StateContext);
   const classes = useStyles();
 
-  useEffect(() => {
-    const ourRequest = Axios.CancelToken.source();
-    const token = appState.user.token;
-    setLoading(true);
-    async function fetchPost() {
-      try {
-        const response = await Axios.post(
-          "/getHomeFeed",
-          { token: token },
-          { cancelToken: ourRequest.token }
-        );
-        if (response.data) {
-          setPost(response.data);
+  useEffect(
+    () => {
+      const ourRequest = Axios.CancelToken.source();
+      const token = appState.user.token;
+      let unmounted = false;
+      setLoading(true);
+      async function fetchPost() {
+        try {
+          const response = await Axios.post(
+            "/getHomeFeed",
+            { token: token },
+            { cancelToken: ourRequest.token }
+          );
+          if (response.data) {
+            setPost(response.data);
+          }
+          if (!unmounted) {
+            setLoading(false);
+          }
+        } catch (err) {
+          if (!unmounted) {
+            setLoading(false);
+          }
+          console.log("Something went wrong or cancel Token");
         }
-        setLoading(false);
-      } catch (err) {
-        setLoading(false);
-        console.log("Something went wrong or cancel Token");
       }
-    }
-    fetchPost();
-    return () => ourRequest.cancel();
-  }, []);
+      fetchPost();
+      return () => {
+        ourRequest.cancel();
+        unmounted = true;
+      };
+    }, // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  );
 
   if (loading) {
     return <LoadingDotsIcon />;
@@ -79,7 +77,7 @@ const Home = () => {
         {post.length > 0 && (
           <List className={classes.listGroup}>
             {post.map((item) => {
-              return <Post key={item._id} post={item} classes={classes} />;
+              return <Post key={item._id} post={item} />;
             })}
           </List>
         )}

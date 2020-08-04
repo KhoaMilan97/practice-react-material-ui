@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useImmerReducer } from "use-immer";
 import Axios from "axios";
-import { useHistory } from "react-router-dom";
+import { useHistory, useParams, Link } from "react-router-dom";
 
 import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
@@ -67,14 +67,26 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor: theme.palette.primary.light,
     },
   },
+  backLink: {
+    textDecoration: "none",
+    color: theme.palette.common.blue,
+    fontWeight: 700,
+    marginBottom: 20,
+    marginLeft: 8,
+    display: "inline-block",
+    "&:hover": {
+      textDecoration: "underline",
+    },
+  },
 }));
 
-const CreatePost = (props) => {
+const EditPost = (props) => {
   const history = useHistory();
   const classes = useStyles();
   const appDispatch = useContext(DispatContext);
   const appState = useContext(StateContext);
   const [loading, setLoading] = useState(false);
+  const { id } = useParams();
 
   const initialState = {
     title: {
@@ -108,6 +120,10 @@ const CreatePost = (props) => {
           draft.body.messages = "You must provide post content.";
         }
         return;
+      case "fetchComplete":
+        draft.title.value = action.value.title;
+        draft.body.value = action.value.body;
+        return;
       case "submitForm":
         if (!draft.title.hasError && !draft.body.hasError) {
           draft.submitCount++;
@@ -119,6 +135,26 @@ const CreatePost = (props) => {
   };
 
   const [state, dispatch] = useImmerReducer(ourReducer, initialState);
+
+  useEffect(() => {
+    const ourRequest = Axios.CancelToken.source();
+    async function fetchResults() {
+      try {
+        const response = await Axios.get(
+          `/post/${id}`,
+
+          { cancelToken: ourRequest.token }
+        );
+        dispatch({ type: "fetchComplete", value: response.data });
+      } catch (error) {
+        console.log("Something went wrong or cancel Token.");
+      }
+    }
+    fetchResults();
+    return () => {
+      ourRequest.cancel();
+    };
+  }, [id]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -138,7 +174,7 @@ const CreatePost = (props) => {
         async function fetchResults() {
           try {
             const response = await Axios.post(
-              "/create-post",
+              `/post/${id}/edit`,
               {
                 title: state.title.value,
                 body: state.body.value,
@@ -147,12 +183,10 @@ const CreatePost = (props) => {
               { cancelToken: ourRequest.token }
             );
 
-            history.push(`/post/${response.data}`);
-
             appDispatch({
               type: "flashMessage",
               data: {
-                message: "Congrats, you created a new post.",
+                message: "Post was updated",
                 type: "success",
               },
             });
@@ -185,6 +219,9 @@ const CreatePost = (props) => {
       style={{ marginTop: "5em", marginBottom: "5em" }}
     >
       <Grid item xs={10} sm={8} md={6} style={{ width: "100%" }}>
+        <Link className={classes.backLink} to={`/post/${id}`}>
+          &laquo; Back to post permalink
+        </Link>
         <FormControl className={classes.margin}>
           <InputLabel shrink htmlFor="bootstrap-input">
             Title
@@ -192,6 +229,7 @@ const CreatePost = (props) => {
           <BootstrapInput
             fullWidth
             id="bootstrap-input"
+            value={state.title.value}
             onChange={(e) => {
               dispatch({ type: "titleImmediately", value: e.target.value });
             }}
@@ -217,6 +255,7 @@ const CreatePost = (props) => {
             multiline
             rows={15}
             fullWidth
+            value={state.body.value}
             id="bootstrap-input"
             onChange={(e) =>
               dispatch({ type: "bodyImmediately", value: e.target.value })
@@ -235,7 +274,7 @@ const CreatePost = (props) => {
           color="primary"
           style={{ width: "14em" }}
         >
-          Save new Post
+          Save Post
           {loading && (
             <CircularProgress
               size={20}
@@ -248,4 +287,4 @@ const CreatePost = (props) => {
   );
 };
 
-export default CreatePost;
+export default EditPost;

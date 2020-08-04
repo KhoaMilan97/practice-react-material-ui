@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 import ListItem from "@material-ui/core/ListItem";
 import Avatar from "@material-ui/core/Avatar";
@@ -18,6 +19,9 @@ const useStyles = makeStyles((theme) => ({
       bordeBottomRightRadius: ".25rem",
       borderBottomLeftRadius: ".25rem",
     },
+    "&:hover": {
+      backgroundColor: "#eee",
+    },
   },
 }));
 
@@ -30,7 +34,11 @@ const Post = (props) => {
     date.getMonth() + 1
   }/${date.getDate()}/${date.getFullYear()}`;
   return (
-    <ListItem className={classes.listGroupItem}>
+    <ListItem
+      component={Link}
+      to={`/post/${post._id}`}
+      className={classes.listGroupItem}
+    >
       <Avatar
         src={post.author && post.author.avatar}
         alt="Avatar profile"

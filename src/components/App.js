@@ -16,6 +16,8 @@ import DispatchContext from "../context/DispatchContext";
 import Home from "./Home";
 import CreatePost from "./CreatePost";
 import ViewSinglePost from "./ViewSinglePost";
+import Profile from "./Profile";
+import EditPost from "./EditPost";
 
 function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -97,8 +99,14 @@ function App() {
               <Route path="/create">
                 <CreatePost />
               </Route>
-              <Route path="/post/:id">
+              <Route exact path="/post/:id">
                 <ViewSinglePost />
+              </Route>
+              <Route path="/post/:id/edit">
+                <EditPost />
+              </Route>
+              <Route path="/profile/:username">
+                <Profile />
               </Route>
             </Switch>
 

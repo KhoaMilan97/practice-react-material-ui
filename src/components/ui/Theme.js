@@ -24,9 +24,9 @@ export default createMuiTheme({
     },
     body2: {
       color: gray,
+      lineHeight: 2,
     },
     h2: {
-      marginBottom: ".5rem",
       fontFamily: "inherit",
       fontWeight: 500,
       lineHeight: 1.2,

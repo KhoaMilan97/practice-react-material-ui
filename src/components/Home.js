@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme) => ({
 
 const Home = () => {
   const [post, setPost] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const appState = useContext(StateContext);
   const classes = useStyles();
 
@@ -35,10 +35,8 @@ const Home = () => {
             { token: token },
             { cancelToken: ourRequest.token }
           );
-          if (response.data) {
-            setPost(response.data);
-          }
           if (!unmounted) {
+            setPost(response.data);
             setLoading(false);
           }
         } catch (err) {

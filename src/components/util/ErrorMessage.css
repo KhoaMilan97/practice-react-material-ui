@@ -1,0 +1,20 @@
+.liveValidateMessage {
+  padding-top: 6px;
+  padding-right: 0.8rem;
+}
+
+.alert-danger {
+  color: red;
+}
+
+.alert {
+  position: relative;
+  border: 1px solid transparent;
+  border-radius: 0.25rem;
+}
+
+.small,
+small {
+  font-size: 80%;
+  font-weight: 400;
+}

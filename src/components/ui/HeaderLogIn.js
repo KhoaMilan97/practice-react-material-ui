@@ -39,6 +39,8 @@ const HeaderLogIn = (props) => {
           alt="Remy Sharp"
           src={state.user.avatar}
           className={classes.avatar}
+          component={Link}
+          to={`/profile/${state.user.username}`}
         />
       </Grid>
       <Grid item style={{ alignSelf: "center" }}>

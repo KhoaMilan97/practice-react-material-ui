@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import Axios from "axios";
 
 import { Grid, Typography, IconButton, Avatar } from "@material-ui/core";
@@ -65,7 +65,7 @@ const ViewSinglePost = () => {
           <Typography variant="h2">{post.title}</Typography>
         </Grid>
         <Grid item>
-          <IconButton>
+          <IconButton component={Link} to={`/post/${post._id}/edit`}>
             <EditIcon color="primary" />
           </IconButton>
           <IconButton>
@@ -78,10 +78,19 @@ const ViewSinglePost = () => {
           src={post.author && post.author.avatar}
           alt="Avatar profile"
           style={{ width: 24, height: 24, verticalAlign: "center" }}
+          component={Link}
+          to={`/profile/${post.author && post.author.username}`}
         />
 
         <Typography style={{ marginLeft: 5 }} variant="body2">
-          Posted by {post.author && post.author.username} on {formatDate}
+          Posted by{" "}
+          <Link
+            style={{ textDecoration: "none", color: "#007bff" }}
+            to={`/profile/${post.author && post.author.username}`}
+          >
+            {post.author && post.author.username}
+          </Link>{" "}
+          on {formatDate}
         </Typography>
       </Grid>
       <Grid item container md={6} style={{ marginTop: "2em" }}>

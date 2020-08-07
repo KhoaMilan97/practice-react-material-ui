@@ -18,6 +18,7 @@ import CreatePost from "./CreatePost";
 import ViewSinglePost from "./ViewSinglePost";
 import Profile from "./Profile";
 import EditPost from "./EditPost";
+import NotFound from "./NotFound";
 
 function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -107,6 +108,9 @@ function App() {
               </Route>
               <Route path="/profile/:username">
                 <Profile />
+              </Route>
+              <Route>
+                <NotFound />
               </Route>
             </Switch>
 

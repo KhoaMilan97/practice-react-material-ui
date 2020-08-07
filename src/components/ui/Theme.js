@@ -28,7 +28,7 @@ export default createMuiTheme({
     },
     h2: {
       fontFamily: "inherit",
-      fontWeight: 500,
+      fontWeight: 400,
       lineHeight: 1.2,
       color: "inherit",
       fontSize: "2rem",

@@ -12,6 +12,7 @@ import FollowersProfile from "./FollowersProfile";
 import FollowingProfile from "./FollowingProfile";
 import ProfilePost from "./ProfilePost";
 import StateContext from "../context/StateContext";
+import NotFound from "./NotFound";
 
 const Profile = () => {
   const [value, setValue] = useState(0);
@@ -33,6 +34,23 @@ const Profile = () => {
   const handleChange = (e, value) => {
     setValue(value);
   };
+
+  // Fixed tab when refresh
+  useEffect(() => {
+    if (window.location.pathname === `/profile/${username}` && value !== 0) {
+      setValue(0);
+    } else if (
+      window.location.pathname === `/profile/${username}/followers` &&
+      value !== 1
+    ) {
+      setValue(1);
+    } else if (
+      window.location.pathname === `/profile/${username}/following` &&
+      value !== 2
+    ) {
+      setValue(2);
+    }
+  }, [value, username]);
 
   useEffect(
     () => {
@@ -61,6 +79,10 @@ const Profile = () => {
     [username]
   );
 
+  if (!state.profileData) {
+    return <NotFound />;
+  }
+
   return (
     <Grid
       container
@@ -87,16 +109,19 @@ const Profile = () => {
             label="Post"
             component={Link}
             to={`/profile/${state.profileData.profileUsername}`}
+            selected={value}
           />
           <Tab
             label="Followers"
             component={Link}
             to={`/profile/${state.profileData.profileUsername}/followers`}
+            selected={value}
           />
           <Tab
             label="Following"
             component={Link}
             to={`/profile/${state.profileData.profileUsername}/following`}
+            selected={value}
           />
         </Tabs>
       </Grid>

@@ -4,9 +4,12 @@ import Axios from "axios";
 import { useImmer } from "use-immer";
 
 import Grid from "@material-ui/core/Grid";
-import { Avatar, Typography } from "@material-ui/core";
+import { Avatar, Typography, IconButton, Tooltip } from "@material-ui/core";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
+import PersonAddIcon from "@material-ui/icons/PersonAdd";
+import PersonAddDisabledIcon from "@material-ui/icons/PersonAddDisabled";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 import FollowersProfile from "./FollowersProfile";
 import FollowingProfile from "./FollowingProfile";
@@ -79,6 +82,96 @@ const Profile = () => {
     [username]
   );
 
+  useEffect(
+    () => {
+      if (state.stopFollowingRequestCount) {
+        setState((draft) => {
+          draft.followActionLoading = true;
+        });
+        const ourRequest = Axios.CancelToken.source();
+        async function stopFollowing() {
+          try {
+            await Axios.post(
+              `/removeFollow/${username}`,
+              {
+                token: appState.user.token,
+              },
+              { cancelToken: ourRequest.token }
+            );
+
+            setState((draft) => {
+              draft.profileData.isFollowing = false;
+              draft.followActionLoading = false;
+              draft.profileData.counts.followerCount--;
+            });
+          } catch (err) {
+            console.log("Something went wrong or cancel Token");
+            setState((draft) => {
+              draft.followActionLoading = false;
+            });
+          }
+        }
+        stopFollowing();
+        return () => {
+          ourRequest.cancel();
+        };
+      }
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [state.stopFollowingRequestCount]
+  );
+
+  useEffect(
+    () => {
+      if (state.startFollowingRequestCount) {
+        setState((draft) => {
+          draft.followActionLoading = true;
+        });
+        const ourRequest = Axios.CancelToken.source();
+        async function stopFollowing() {
+          try {
+            await Axios.post(
+              `/addFollow/${username}`,
+              {
+                token: appState.user.token,
+              },
+              { cancelToken: ourRequest.token }
+            );
+
+            setState((draft) => {
+              draft.profileData.isFollowing = true;
+              draft.followActionLoading = false;
+              draft.profileData.counts.followerCount++;
+            });
+          } catch (err) {
+            console.log("Something went wrong or cancel Token");
+            setState((draft) => {
+              draft.followActionLoading = false;
+            });
+          }
+        }
+        stopFollowing();
+        return () => {
+          ourRequest.cancel();
+        };
+      }
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [state.startFollowingRequestCount]
+  );
+
+  function handleUnFollow() {
+    setState((draft) => {
+      draft.stopFollowingRequestCount++;
+    });
+  }
+
+  function handleFollow() {
+    setState((draft) => {
+      draft.startFollowingRequestCount++;
+    });
+  }
+
   if (!state.profileData) {
     return <NotFound />;
   }
@@ -101,6 +194,28 @@ const Profile = () => {
           <Typography style={{ marginLeft: 10 }} variant="h2">
             {state.profileData.profileUsername}
           </Typography>
+        </Grid>
+
+        <Grid item>
+          {state.followActionLoading ? (
+            <CircularProgress
+              color="primary"
+              style={{ width: 23, height: 23, marginLeft: 10 }}
+            />
+          ) : appState.user.username === username ? null : state.profileData
+              .isFollowing ? (
+            <Tooltip title="UnFollow">
+              <IconButton onClick={handleUnFollow}>
+                <PersonAddDisabledIcon style={{ color: "#dc3545" }} />
+              </IconButton>
+            </Tooltip>
+          ) : (
+            <Tooltip title="Follow">
+              <IconButton onClick={handleFollow}>
+                <PersonAddIcon color="primary" />
+              </IconButton>
+            </Tooltip>
+          )}
         </Grid>
       </Grid>
       <Grid item container md={6}>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useImmerReducer } from "use-immer";
 import Axios from "axios";
-import { useHistory, useParams, Link } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 
 import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
@@ -81,7 +81,6 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const EditPost = (props) => {
-  const history = useHistory();
   const classes = useStyles();
   const appDispatch = useContext(DispatContext);
   const appState = useContext(StateContext);
@@ -154,7 +153,7 @@ const EditPost = (props) => {
     return () => {
       ourRequest.cancel();
     };
-  }, [id]);
+  }, [id, dispatch]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -173,7 +172,7 @@ const EditPost = (props) => {
         setLoading(true);
         async function fetchResults() {
           try {
-            const response = await Axios.post(
+            await Axios.post(
               `/post/${id}/edit`,
               {
                 title: state.title.value,

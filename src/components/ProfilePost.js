@@ -65,8 +65,6 @@ const ProfilePost = () => {
     return <LoadingDotsIcon />;
   }
 
-  console.log(post);
-
   return (
     <React.Fragment>
       {post.length > 0 &&

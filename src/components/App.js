@@ -71,21 +71,18 @@ function App() {
     dispatch({ type: "closeMessage" });
   };
 
-  useEffect(
-    () => {
-      if (state.loggedIn) {
-        localStorage.setItem("username", state.user.username);
-        localStorage.setItem("avatar", state.user.avatar);
-        localStorage.setItem("token", state.user.token);
-      } else {
-        localStorage.removeItem("username");
-        localStorage.removeItem("avatar");
-        localStorage.removeItem("token");
-      }
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [state.loggedIn]
-  );
+  useEffect(() => {
+    const { username, avatar, token } = state.user;
+    if (state.loggedIn) {
+      localStorage.setItem("username", username);
+      localStorage.setItem("avatar", avatar);
+      localStorage.setItem("token", token);
+    } else {
+      localStorage.removeItem("username");
+      localStorage.removeItem("avatar");
+      localStorage.removeItem("token");
+    }
+  }, [state.loggedIn]);
 
   return (
     <StateContext.Provider value={state}>

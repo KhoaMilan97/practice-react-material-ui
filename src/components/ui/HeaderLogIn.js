@@ -7,6 +7,7 @@ import SearchIcon from "@material-ui/icons/Search";
 import ChatBubbleIcon from "@material-ui/icons/ChatBubble";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
+import ToolTip from "@material-ui/core/Tooltip";
 
 import DispatchContext from "../../context/DispatchContext";
 import StateContext from "../../context/StateContext";
@@ -25,23 +26,29 @@ const HeaderLogIn = (props) => {
       style={{ marginBottom: matchesSM ? 10 : 0 }}
     >
       <Grid item>
-        <IconButton className={classes.icon}>
-          <SearchIcon style={{ color: "white", fontSize: 20 }} />
-        </IconButton>
+        <ToolTip title="Search">
+          <IconButton className={classes.icon}>
+            <SearchIcon style={{ color: "white", fontSize: 20 }} />
+          </IconButton>
+        </ToolTip>
       </Grid>
       <Grid item>
-        <IconButton className={classes.icon}>
-          <ChatBubbleIcon style={{ color: "white", fontSize: 20 }} />
-        </IconButton>
+        <ToolTip title="Message">
+          <IconButton className={classes.icon}>
+            <ChatBubbleIcon style={{ color: "white", fontSize: 20 }} />
+          </IconButton>
+        </ToolTip>
       </Grid>
       <Grid item style={{ alignSelf: "center" }}>
-        <Avatar
-          alt="Remy Sharp"
-          src={state.user.avatar}
-          className={classes.avatar}
-          component={Link}
-          to={`/profile/${state.user.username}`}
-        />
+        <ToolTip title="Profile">
+          <Avatar
+            alt="Remy Sharp"
+            src={state.user.avatar}
+            className={classes.avatar}
+            component={Link}
+            to={`/profile/${state.user.username}`}
+          />
+        </ToolTip>
       </Grid>
       <Grid item style={{ alignSelf: "center" }}>
         <Button

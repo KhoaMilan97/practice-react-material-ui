@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Link } from "react-router-dom";
 
 import ListItem from "@material-ui/core/ListItem";
@@ -6,11 +6,14 @@ import Avatar from "@material-ui/core/Avatar";
 import { Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 
+import DisptachContext from "../context/DispatchContext";
+
 const useStyles = makeStyles((theme) => ({
   listGroupItem: {
     border: "1px solid rgba(0,0,0,.125)",
     padding: ".75rem 1.25rem",
     marginBottom: "-1px",
+    backgroundColor: "white",
     "&:first-child": {
       borderTopLeftRadius: ".25rem",
       borderTopRightRadius: ".25rem",
@@ -28,6 +31,7 @@ const useStyles = makeStyles((theme) => ({
 const Post = (props) => {
   const { post } = props;
   const classes = useStyles();
+  const appDispatch = useContext(DisptachContext);
 
   const date = new Date(post.createdDate);
   const formatDate = `${
@@ -38,6 +42,7 @@ const Post = (props) => {
       component={Link}
       to={`/post/${post._id}`}
       className={classes.listGroupItem}
+      onClick={() => appDispatch({ type: "closeSearch" })}
     >
       <Avatar
         src={post.author && post.author.avatar}

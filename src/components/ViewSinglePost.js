@@ -1,9 +1,16 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useParams, Link, useHistory } from "react-router-dom";
 import Axios from "axios";
+import ReactMarkdown from "react-markdown";
 
-import { Grid, Typography, IconButton, Avatar } from "@material-ui/core";
-
+import {
+  Grid,
+  Typography,
+  IconButton,
+  Avatar,
+  Tooltip,
+} from "@material-ui/core";
+import { makeStyles } from "@material-ui/core/styles";
 import EditIcon from "@material-ui/icons/Edit";
 import DeleteIcon from "@material-ui/icons/Delete";
 import LoadingDotsIcon from "./util/LoadingDotsIcon";
@@ -12,9 +19,21 @@ import StateContext from "../context/StateContext";
 import DispatchContext from "../context/DispatchContext";
 import NotFound from "./NotFound";
 
+const useStyles = makeStyles((theme) => ({
+  bodyContent: {
+    fontSize: "1.2rem",
+    lineheight: 1.75,
+    color: "#292929",
+    "& p, & ul, & ol": {
+      marginBottom: "1.75rem",
+    },
+  },
+}));
+
 // "/post/:id"
 
 const ViewSinglePost = () => {
+  const classes = useStyles();
   const [post, setPost] = useState([]);
   const [loading, setLoading] = useState(false);
   const { id } = useParams();
@@ -110,12 +129,16 @@ const ViewSinglePost = () => {
         </Grid>
         {isOwner() ? (
           <Grid item>
-            <IconButton component={Link} to={`/post/${post._id}/edit`}>
-              <EditIcon color="primary" />
-            </IconButton>
-            <IconButton onClick={handleDelete}>
-              <DeleteIcon style={{ color: "#dc3545" }} />
-            </IconButton>
+            <Tooltip title="Edit">
+              <IconButton component={Link} to={`/post/${post._id}/edit`}>
+                <EditIcon color="primary" />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Delete">
+              <IconButton onClick={handleDelete}>
+                <DeleteIcon style={{ color: "#dc3545" }} />
+              </IconButton>
+            </Tooltip>
           </Grid>
         ) : null}
       </Grid>
@@ -139,8 +162,25 @@ const ViewSinglePost = () => {
           on {formatDate}
         </Typography>
       </Grid>
-      <Grid item container md={6} style={{ marginTop: "2em" }}>
-        {post.body}
+      <Grid
+        item
+        className={classes.bodyContent}
+        container
+        md={6}
+        style={{ marginTop: "2em" }}
+      >
+        <ReactMarkdown
+          source={post.body}
+          allowedTypes={[
+            "paragraph",
+            "strong",
+            "emphasis",
+            "text",
+            "heading",
+            "list",
+            "listItem",
+          ]}
+        />
       </Grid>
     </Grid>
   );

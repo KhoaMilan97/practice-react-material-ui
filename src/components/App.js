@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { useImmerReducer } from "use-immer";
 import { Route, BrowserRouter, Switch } from "react-router-dom";
+import { CSSTransition } from "react-transition-group";
 
 import { ThemeProvider } from "@material-ui/core/styles";
 import Snackbar from "@material-ui/core/Snackbar";
@@ -19,6 +20,9 @@ import ViewSinglePost from "./ViewSinglePost";
 import Profile from "./Profile";
 import EditPost from "./EditPost";
 import NotFound from "./NotFound";
+import Search from "./Search";
+
+import "./App.css";
 
 function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -36,6 +40,9 @@ function App() {
       open: false,
       text: "",
       type: "",
+    },
+    search: {
+      open: false,
     },
   };
 
@@ -55,6 +62,12 @@ function App() {
         return;
       case "closeMessage":
         draft.message.open = false;
+        return;
+      case "openSearch":
+        draft.search.open = true;
+        return;
+      case "closeSearch":
+        draft.search.open = false;
         return;
       default:
         break;
@@ -110,6 +123,14 @@ function App() {
                 <NotFound />
               </Route>
             </Switch>
+            <CSSTransition
+              classNames="search-overlay"
+              in={state.search.open}
+              unmountOnExit
+              timeout={330}
+            >
+              <Search />
+            </CSSTransition>
 
             <Footer />
             <Snackbar

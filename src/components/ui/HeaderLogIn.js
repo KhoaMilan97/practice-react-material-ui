@@ -27,7 +27,10 @@ const HeaderLogIn = (props) => {
     >
       <Grid item>
         <ToolTip title="Search">
-          <IconButton className={classes.icon}>
+          <IconButton
+            onClick={() => dispatch({ type: "openSearch" })}
+            className={classes.icon}
+          >
             <SearchIcon style={{ color: "white", fontSize: 20 }} />
           </IconButton>
         </ToolTip>
